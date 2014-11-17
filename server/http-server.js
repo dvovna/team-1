@@ -1,6 +1,7 @@
 var http = require('http')
   , url = require('url')
   , fs = require('fs')
+  , logPrefix = 'HTTP Server'
   , log = require('npmlog')
   , isStarted = false
   , path = require('path')
@@ -9,29 +10,25 @@ exports.start = function (config) {
   if (config && !isStarted) {
     try {
       http.createServer(function (request, response) {
-        log.http(request.method + ' request', request.url)
+        log.http(logPrefix, request.method + ' request', request.url)
 
         var urlParsed = url.parse(request.url, true)
+          , urlParsedQueryName = urlParsed.query.name
 
-        // urlParsed.query.name стоит вынести в переменную
-        if (urlParsed.pathname == '/theme' && urlParsed.query.name) {
-          var themePath = 'libs/codemirror/theme/' + urlParsed.query.name
+        if (urlParsed.pathname == '/theme' && urlParsedQueryName) {
+          var themePath = 'libs/codemirror/theme/' + urlParsedQueryName
 
           fs.readFile(themePath + '.css', 'utf8',  function (err, data) {
             if (err) throw err
 
-            response.write(JSON.stringify(data))
-            // http://nodejs.org/api/http.html#http_response_end_data_encoding
-            response.end() // можно сделать response.end(JSON.stringify(data))
-                           // тут и ниже
+            response.end(JSON.stringify(data))
           })
         }
-        else if (urlParsed.pathname == '/theme' && !urlParsed.query.name) {
+        else if (urlParsed.pathname == '/theme' && !urlParsedQueryName) {
           fs.readdir('libs/codemirror/theme/', function (err, files) {
             if (err) throw err
 
-            response.write(JSON.stringify(files))
-            response.end()
+            response.end(JSON.stringify(files))
           })
         }
         else if (request.method == 'POST') {
@@ -73,7 +70,7 @@ exports.start = function (config) {
           //reading index file
           fs.readFile(config.index, function (err, page) {
             if (err) {
-              log.error('HTTP server', err.message)
+              log.error(logPrefix, err.message)
               response.writeHeader(500)
               response.end('Can\'t read ' + config.index +
                            ' file. (Try to create it: npm run make)')
@@ -86,10 +83,10 @@ exports.start = function (config) {
           })
         }
       }).listen(config.port)
-      log.info('HTTP server', 'Server started at port ' + config.port)
+      log.info(logPrefix, 'Server started at port ' + config.port)
       isStarted = true
     } catch (e) {
-      log.error('HTTP server', 'Server can\'t start. ' + e)
+      log.error(logPrefix, 'Server can\'t start. ' + e)
     }
   }
 }
