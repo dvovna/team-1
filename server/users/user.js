@@ -51,7 +51,7 @@ _.extend(User.prototype, {
       return
     }
 
-    if (jsonData.a === 'meta') {
+    if (data.a === 'meta') {
       this.onMetaEvent(jsonData)
       return;
     }

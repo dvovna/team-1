@@ -65,7 +65,7 @@ _.extend(Document.prototype, {
     return this
   }
 
-  , getAvailableColor = function () {
+  , getAvailableColor: function () {
     var color = this.availableColors[0] || this.getRandomColor()
 
     _.pull(this.availableColors, color)
@@ -96,7 +96,7 @@ _.extend(Document.prototype, {
     return { id: this.id }
   }
 
-  , restoreColor = function (color) {
+  , restoreColor: function (color) {
     var colorsArr = []
 
     colorsArr.push(color)
@@ -118,7 +118,7 @@ _.extend(Document.prototype, {
       }
     )
   }
-  , getRandomColor = function () {
+  , getRandomColor: function () {
     var letters = ('0123456789ABCDEF').split('')
       , color = '#'
       , i = 0;
@@ -127,6 +127,6 @@ _.extend(Document.prototype, {
       color += letters[Math.floor(Math.random() * 16)];
     }
 
-    return color;
+    return color
   }
 })
