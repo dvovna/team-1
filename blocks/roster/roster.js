@@ -23,5 +23,5 @@ Team1.Roster.prototype.fillList = function (usersList) {
 }
 
 Team1.Roster.prototype.getUsersCount = function () {
-	return $(".roster-list li").length;
+  return $('.roster-list li').length
 }

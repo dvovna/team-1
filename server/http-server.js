@@ -34,7 +34,7 @@ exports.start = function (config) {
         else if (request.method == 'POST') {
           var body = ''
           request.on('data', function (data) {
-              body += data
+            body += data
           });
           request.on('end', function () {
             var jsonBody = JSON.parse(body)
@@ -42,9 +42,7 @@ exports.start = function (config) {
               saveDocument(jsonBody)
             }
             else if (jsonBody.operation == 'get') {
-              //console.log('getDocument ' + jsonBody.docName)
               var docContent = getDocument(jsonBody.docName)
-              //console.log(docContent)
               var docObj = {
                 value: docContent
               }
@@ -52,13 +50,10 @@ exports.start = function (config) {
               var docJSON = JSON.stringify(docObj)
 
               if (docJSON != null) {
-                //response.writeHead(200, { 'Content-Type': 'application/json' })
                 console.log(docJSON)
-                //response.write(docJSON)
                 response.end(docJSON)
               }
               else {
-                console.log('nothing');
                 response.end()
               }
 
@@ -67,7 +62,6 @@ exports.start = function (config) {
           });
         }
         else {
-          //reading index file
           fs.readFile(config.index, function (err, page) {
             if (err) {
               log.error(logPrefix, err.message)

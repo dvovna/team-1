@@ -146,11 +146,11 @@ Team1 = {
     $.ajax({ type: "POST"
             , url: window.location.pathname
             , data: JSON.stringify(docContentObj)
-            , success: function(data) {
-                console.log('success')
+            , success: function () {
+              console.log('success')
             }
-            , fail: function() {
-                console.log('error')
+            , fail: function () {
+              console.log('error')
             }
         })
   }
@@ -162,20 +162,21 @@ Team1 = {
     }
 
     $.ajax({ type: "POST"
-            , url: window.location.pathname
-            , dataType: 'json'
-            , data: JSON.stringify(docContentObj)
-            , success: function(doc) {
-                console.log('success')
-                console.log(doc.value);
-                if (doc != null) {
-                  Team1.Editor.codeEditor.getDoc().setValue(doc.value)
-                }
-            }
-            , fail: function() {
-                console.log('error')
-            }
-        })
+        , url: window.location.pathname
+        , dataType: 'json'
+        , data: JSON.stringify(docContentObj)
+        , success: function (doc) {
+          console.log('success')
+          console.log(doc.value)
+          if (doc != null) {
+            Team1.Editor.codeEditor.getDoc().setValue(doc.value)
+          }
+        }
+        , fail: function () {
+          console.log('error')
+        }
+      }
+    )
   }
 
   , getSocket : function () {
@@ -190,13 +191,13 @@ $(document).ready(function () {
 })
 
 window.onbeforeunload = function () {
-  if (Team1.Roster.getUsersCount() == 1) {
-      Team1.saveDocument()
+  if (Team1.Roster.getUsersCount() === 1) {
+    Team1.saveDocument()
   }
 }
 
 window.onunload = function () {
-  if (Team1.Roster.getUsersCount() == 1) {
-      Team1.saveDocument()
+  if (Team1.Roster.getUsersCount() === 1) {
+    Team1.saveDocument()
   }
 }
