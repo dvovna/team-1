@@ -143,7 +143,7 @@ Team1 = {
       , docContent: this.Editor.codeEditor.getValue()
     }
 
-    $.ajax({ type: "POST"
+    $.ajax({ type: 'POST'
             , url: window.location.pathname
             , data: JSON.stringify(docContentObj)
             , success: function () {
@@ -155,20 +155,20 @@ Team1 = {
         })
   }
 
-  , loadDocument: function (docId) {
+  , loadDocument: function () {
     var docContentObj = {
       operation: 'get'
       , docName: this.documentId
     }
 
-    $.ajax({ type: "POST"
+    $.ajax({ type: 'POST'
         , url: window.location.pathname
         , dataType: 'json'
         , data: JSON.stringify(docContentObj)
         , success: function (doc) {
           console.log('success')
           console.log(doc.value)
-          if (doc != null) {
+          if (doc !== null) {
             Team1.Editor.codeEditor.getDoc().setValue(doc.value)
           }
         }

@@ -52,7 +52,7 @@ _.extend(User.prototype, {
     }
 
     if (data.a === 'meta') {
-      this.onMetaEvent(jsonData)
+      this.onMetaEvent(data)
       return;
     }
     return this._stream.push(data)

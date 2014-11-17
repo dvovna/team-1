@@ -6,6 +6,33 @@ var http = require('http')
   , isStarted = false
   , path = require('path')
 
+
+
+
+
+function saveDocument (jsonDoc) {
+
+  if (!fs.existsSync(__dirname + path.sep + 'savedDocuments')) {
+    fs.mkdirSync(__dirname + path.sep + 'savedDocuments')
+  }
+
+  fs.writeFileSync( __dirname + path.sep + 'savedDocuments'
+  + path.sep + jsonDoc.docName, jsonDoc.docContent )
+}
+
+
+function getDocument (docId) {
+  var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + docId
+
+  if (fs.existsSync(pathToDoc)) {
+    return fs.readFileSync(pathToDoc, 'utf8')
+  }
+  else {
+    return null
+  }
+}
+
+
 exports.start = function (config) {
   if (config && !isStarted) {
     try {
@@ -49,7 +76,7 @@ exports.start = function (config) {
 
               var docJSON = JSON.stringify(docObj)
 
-              if (docJSON != null) {
+              if (docJSON !== null) {
                 console.log(docJSON)
                 response.end(docJSON)
               }
@@ -83,28 +110,4 @@ exports.start = function (config) {
       log.error(logPrefix, 'Server can\'t start. ' + e)
     }
   }
-}
-
-
-function saveDocument(jsonDoc) {
-
-  if (!fs.existsSync(__dirname + path.sep + 'savedDocuments')) {
-    fs.mkdirSync(__dirname + path.sep + 'savedDocuments')
-  }
-
-  fs.writeFileSync( __dirname + path.sep + 'savedDocuments'
-              + path.sep + jsonDoc.docName, jsonDoc.docContent )
-}
-
-
-function getDocument(docId) {
-  var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + docId
-
-  if (fs.existsSync(pathToDoc)) {
-    return fs.readFileSync(pathToDoc, "utf8")
-  }
-  else {
-    return null
-  }
-
 }
