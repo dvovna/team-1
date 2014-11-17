@@ -2,7 +2,7 @@ var http = require('http')
   , url = require('url')
   , fs = require('fs')
   , log = require('npmlog')
-  , isStarted = !1
+  , isStarted = false
   , path = require('path')
 
 exports.start = function (config) {
@@ -13,6 +13,7 @@ exports.start = function (config) {
 
         var urlParsed = url.parse(request.url, true)
 
+        // urlParsed.query.name стоит вынести в переменную
         if (urlParsed.pathname == '/theme' && urlParsed.query.name) {
           var themePath = 'libs/codemirror/theme/' + urlParsed.query.name
 
@@ -20,7 +21,9 @@ exports.start = function (config) {
             if (err) throw err
 
             response.write(JSON.stringify(data))
-            response.end()
+            // http://nodejs.org/api/http.html#http_response_end_data_encoding
+            response.end() // можно сделать response.end(JSON.stringify(data))
+                           // тут и ниже
           })
         }
         else if (urlParsed.pathname == '/theme' && !urlParsed.query.name) {
@@ -50,7 +53,7 @@ exports.start = function (config) {
               }
 
               var docJSON = JSON.stringify(docObj)
-              
+
               if (docJSON != null) {
                 //response.writeHead(200, { 'Content-Type': 'application/json' })
                 console.log(docJSON)
@@ -61,11 +64,11 @@ exports.start = function (config) {
                 console.log('nothing');
                 response.end()
               }
-              
+
             }
-            
+
           });
-        } 
+        }
         else {
           //reading index file
           fs.readFile(config.index, function (err, page) {
@@ -84,7 +87,7 @@ exports.start = function (config) {
         }
       }).listen(config.port)
       log.info('HTTP server', 'Server started at port ' + config.port)
-      isStarted = !0
+      isStarted = true
     } catch (e) {
       log.error('HTTP server', 'Server can\'t start. ' + e)
     }
