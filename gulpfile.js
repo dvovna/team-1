@@ -6,6 +6,8 @@ var gulp = require('gulp')
   , watch = require('gulp-watch')
   , streamqueue = require('streamqueue')
   , karma = require('karma').server
+  , rimraf = require('rimraf')
+  , clean = require('gulp-clean')
   , uglify = require('gulp-uglify')
   , minifyCSS = require('gulp-minify-css')
   , minifyHTML = require('gulp-minify-html')
@@ -13,17 +15,11 @@ var gulp = require('gulp')
   , env = process.env.NODE_ENV || 'DEV'
 
 gulp.task('config', function () {
-
-  var srcConfig = ''
+  var srcConfig = (env === 'PROD')
+    ? './config/prod.json'
+    : './config/dev.json'
 
   console.log('App is running in ' + env + ' environment')
-
-  if (env === 'PROD') {
-    srcConfig = './config/prod.json'
-  }
-  else {
-    srcConfig = './config/dev.json'
-  }
 
   gulp
     .src(srcConfig)
@@ -31,14 +27,15 @@ gulp.task('config', function () {
     .pipe(gulp.dest('./config'))
 })
 
-gulp.task('index.min.html', function () {
+gulp.task('index.min.html', ['css'], function () {
   var opts = {comments:true,spare:true};
+
   streamqueue(
     { objectMode: true }
     , gulp.src('blocks/**/*.html')
       .pipe(minifyHTML(opts))
       .pipe(gulp.dest('./dist/html'))
-    , gulp.src(['blocks/**/*.css', 'libs/codemirror/lib/codemirror.css'])
+    , gulp.src(['dist/css/index.css'])
       .pipe(minifyCSS({keepBreaks:false}))
       .pipe(gulp.dest('./dist/css'))
     , gulp.src(
@@ -50,30 +47,6 @@ gulp.task('index.min.html', function () {
     )
       .pipe(uglify())
       .pipe(gulp.dest('dist/js'))
-    , gulp.src('dist/html/page/page.html')
-    , gulp
-      .src('dist/html/**/*.html')
-      .pipe(gulpIgnore.exclude('**/page.html'))
-      .pipe(wrap('<script '
-          + 'type="template" '
-          + 'id="<%= file.path.replace(/^.*\\/([^/]+)$/, \'$1\') %>">'
-          + '<%= file.contents %>'
-          + '</script>'
-      ))
-    , gulp
-        .src(
-          [ 'dist/css/codemirror.css'
-          , 'libs/switchery/dist/switchery.min.css'
-          , 'dist/css/**/*.css'
-          ]
-        )
-        .pipe(concat('index.css'))
-        .pipe(autoprefixer(
-          { browsers: ['last 3 versions']
-          , cascade: true
-          }
-        ))
-        .pipe(wrap('<style><%= contents %></style>'))
     , gulp
       .src(
         [ 'libs/jquery/dist/jquery.min.js'
@@ -156,16 +129,40 @@ gulp.task('test', function (done) {
     singleRun: true
   }, done)
 })
-
 gulp.task('tdd', function (done) {
   karma.start({
     configFile: __dirname + '/karma.conf.js'
   }, done)
 })
 
+gulp.task('clean', function (cb) {
+  gulp.src('index.html', {read: false})
+    .pipe(clean());
+  rimraf('dist', cb);
+})
 
-gulp.task('default', runSequence( 'config', 'index.html'))
+gulp.task('css', function (cb) {
+  streamqueue(
+    { objectMode: true }
+  , gulp
+    .src(
+      [ 'libs/codemirror/lib/codemirror.css'
+        , 'libs/switchery/dist/switchery.min.css'
+        , 'blocks/**/*.css'
+      ]
+    )
+    .pipe(concat('index.css'))
+    .pipe(autoprefixer(
+      { browsers: ['last 3 versions']
+        , cascade: true
+      }
+    ))
+    .pipe(wrap('<style><%= contents %></style>'))
+    .pipe(gulp.dest('dist/css'), cb)
+  )
+})
 
+gulp.task('default', runSequence( 'config', 'clean', 'index.min.html'))
 
-gulp.task('watch', ['config', 'compress', 'index.min.html', 'watch'])
+gulp.task('watch', ['config', 'index.min.html', 'watch'])
 gulp.task('nominify', ['config', 'index.html'])
