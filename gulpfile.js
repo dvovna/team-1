@@ -27,7 +27,7 @@ gulp.task('config', function () {
     .pipe(gulp.dest('./config'))
 })
 
-gulp.task('index.min.html', ['css'], function () {
+gulp.task('index.min.html', function () {
   var opts = {comments:true,spare:true};
 
   streamqueue(
@@ -68,48 +68,13 @@ gulp.task('index.min.html', ['css'], function () {
 })
 
 gulp.task('index.html', function () {
-  streamqueue(
-    { objectMode: true }
-    , gulp.src('blocks/page/page.html')
-    , gulp
-      .src('blocks/**/*.html')
-      .pipe(gulpIgnore.exclude('**/page.html'))
-      .pipe(wrap('<script '
-          + 'type="template" '
-          + 'id="<%= file.path.replace(/^.*\\/([^/]+)$/, \'$1\') %>">'
-          + '<%= file.contents %>'
-          + '</script>'
-      ))
-    , gulp
-        .src(
-          [ 'libs/codemirror/lib/codemirror.css'
-          , 'libs/switchery/dist/switchery.min.css'
-          , 'blocks/**/*.css'
-          ]
-        )
-        .pipe(concat('index.css'))
-        .pipe(autoprefixer(
-          { browsers: ['last 3 versions']
-          , cascade: true
-          }
-        ))
-        .pipe(wrap('<style><%= contents %></style>'))
-    , gulp
-      .src(
-        [ 'libs/jquery/dist/jquery.min.js'
-        , 'libs/lodash/dist/lodash.min.js'
-        , 'libs/codemirror/lib/codemirror.js'
-        , 'node_modules/share/webclient/share.uncompressed.js'
-        , 'libs/share-codemirror/share-codemirror.js'
-        , 'libs/codemirror/mode/javascript/javascript.js'
-        , 'libs/switchery/dist/switchery.min.js'
-        , 'blocks/page/page.js'
-        , 'blocks/**/*.js'
-        ]
-      )
-      .pipe(concat('index.js'))
-      .pipe(wrap('<script><%= contents %></script>'))
-  )
+  gulp
+    .src(
+      [ 'dist/**/*.css'
+      , 'dist/**/*.html'
+      , 'dist/**/*.js'
+      ]
+    )
     .pipe(concat('index.html'))
     .pipe(gulp.dest('./'))
 })
@@ -141,7 +106,7 @@ gulp.task('clean', function (cb) {
   rimraf('dist', cb);
 })
 
-gulp.task('css', function (cb) {
+gulp.task('css', function () {
   streamqueue(
     { objectMode: true }
   , gulp
@@ -152,17 +117,44 @@ gulp.task('css', function (cb) {
       ]
     )
     .pipe(concat('index.css'))
-    .pipe(autoprefixer(
+  )
+  .pipe(autoprefixer(
       { browsers: ['last 3 versions']
-        , cascade: true
+      , cascade: true
       }
     ))
     .pipe(wrap('<style><%= contents %></style>'))
-    .pipe(gulp.dest('dist/css'), cb)
-  )
+    .pipe(gulp.dest('dist/css'))
 })
 
-gulp.task('default', runSequence( 'config', 'clean', 'index.min.html'))
+gulp.task('html', function () {
+  gulp.src('blocks/**/*.html')
+    .pipe(concat('index.html'))
+    .pipe(gulp.dest('dist/html'))
+})
+
+gulp.task('js', function () {
+  streamqueue(
+      {objectMode: true},
+      gulp.src(
+      [ 'libs/jquery/dist/jquery.min.js'
+        , 'libs/lodash/dist/lodash.min.js'
+        , 'libs/codemirror/lib/codemirror.js'
+        , 'node_modules/share/webclient/share.uncompressed.js'
+        , 'libs/share-codemirror/share-codemirror.js'
+        , 'libs/codemirror/mode/javascript/javascript.js'
+        , 'libs/switchery/dist/switchery.min.js'
+        , 'blocks/page/page.js'
+        , 'blocks/**/*.js'
+      ]
+    )
+    .pipe(concat('index.js'))
+    .pipe(wrap('<script><%= contents %></script>'))
+    )
+    .pipe(gulp.dest('dist/js'))
+})
+
+//gulp.task('default', runSequence( 'config', ['clean', 'index.min.html']))
 
 gulp.task('watch', ['config', 'index.min.html', 'watch'])
 gulp.task('nominify', ['config', 'index.html'])
