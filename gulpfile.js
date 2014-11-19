@@ -1,5 +1,4 @@
 var gulp = require('gulp')
-  , gulpIgnore = require('gulp-ignore')
   , concat = require('gulp-concat')
   , autoprefixer = require('gulp-autoprefixer')
   , wrap = require('gulp-wrap')
@@ -28,55 +27,16 @@ gulp.task('config', function () {
 })
 
 gulp.task('index.min.html', function () {
-  var opts = {comments:true,spare:true};
-
-  streamqueue(
-    { objectMode: true }
-    , gulp.src('blocks/**/*.html')
-      .pipe(minifyHTML(opts))
-      .pipe(gulp.dest('./dist/html'))
-    , gulp.src(['dist/css/index.css'])
-      .pipe(minifyCSS({keepBreaks:false}))
-      .pipe(gulp.dest('./dist/css'))
-    , gulp.src(
-      [ 'blocks/**/*.js'
-      , 'libs/codemirror/lib/codemirror.js'
-      , 'libs/share-codemirror/share-codemirror.js'
-      , 'libs/codemirror/mode/javascript/javascript.js'
+  runSequence(['html', 'js', 'css'], function () {
+    gulp.src(
+      [ 'dist/**/*.html'
+        , 'dist/**/*.css'
+        , 'dist/**/*.js'
       ]
     )
-      .pipe(uglify())
-      .pipe(gulp.dest('dist/js'))
-    , gulp
-      .src(
-        [ 'libs/jquery/dist/jquery.min.js'
-        , 'libs/lodash/dist/lodash.min.js'
-        , 'dist/js/codemirror.js'
-        , 'node_modules/share/webclient/share.js'
-        , 'dist/js/share-codemirror.js'
-        , 'dist/js/javascript.js'
-        , 'libs/switchery/dist/switchery.min.js'
-        , 'dist/js/page/page.js'
-        , 'dist/js/**/*.js'
-        ]
-      )
-      .pipe(concat('index.js'))
-      .pipe(wrap('<script><%= contents %></script>'))
-  )
-    .pipe(concat('index.html'))
-    .pipe(gulp.dest('./'))
-})
-
-gulp.task('index.html', function () {
-  gulp
-    .src(
-      [ 'dist/**/*.css'
-      , 'dist/**/*.html'
-      , 'dist/**/*.js'
-      ]
-    )
-    .pipe(concat('index.html'))
-    .pipe(gulp.dest('./'))
+      .pipe(concat('index.html'))
+      .pipe(gulp.dest('./'))
+  })
 })
 
 gulp.task('watch', function () {
@@ -103,6 +63,8 @@ gulp.task('tdd', function (done) {
 gulp.task('clean', function (cb) {
   gulp.src('index.html', {read: false})
     .pipe(clean());
+  gulp.src('index.min.html', {read: false})
+    .pipe(clean());
   rimraf('dist', cb);
 })
 
@@ -124,37 +86,39 @@ gulp.task('css', function () {
       }
     ))
     .pipe(wrap('<style><%= contents %></style>'))
+    .pipe(minifyCSS({keepBreaks:false}))
     .pipe(gulp.dest('dist/css'))
 })
-
 gulp.task('html', function () {
+  var opts = {comments:true, spare:true}
+
   gulp.src('blocks/**/*.html')
     .pipe(concat('index.html'))
+    .pipe(minifyHTML(opts))
     .pipe(gulp.dest('dist/html'))
 })
-
 gulp.task('js', function () {
   streamqueue(
       {objectMode: true},
       gulp.src(
       [ 'libs/jquery/dist/jquery.min.js'
-        , 'libs/lodash/dist/lodash.min.js'
-        , 'libs/codemirror/lib/codemirror.js'
-        , 'node_modules/share/webclient/share.uncompressed.js'
-        , 'libs/share-codemirror/share-codemirror.js'
-        , 'libs/codemirror/mode/javascript/javascript.js'
-        , 'libs/switchery/dist/switchery.min.js'
-        , 'blocks/page/page.js'
-        , 'blocks/**/*.js'
+      , 'libs/lodash/dist/lodash.min.js'
+      , 'libs/codemirror/lib/codemirror.js'
+      , 'node_modules/share/webclient/share.uncompressed.js'
+      , 'libs/share-codemirror/share-codemirror.js'
+      , 'libs/codemirror/mode/javascript/javascript.js'
+      , 'libs/switchery/dist/switchery.min.js'
+      , 'blocks/page/page.js'
+      , 'blocks/**/*.js'
       ]
     )
     .pipe(concat('index.js'))
+    .pipe(uglify())
     .pipe(wrap('<script><%= contents %></script>'))
-    )
+  )
     .pipe(gulp.dest('dist/js'))
 })
 
-//gulp.task('default', runSequence( 'config', ['clean', 'index.min.html']))
-
 gulp.task('watch', ['config', 'index.min.html', 'watch'])
-gulp.task('nominify', ['config', 'index.html'])
+
+gulp.task('default', runSequence('config', 'index.min.html'))
