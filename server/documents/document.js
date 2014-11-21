@@ -1,4 +1,6 @@
 var _ = require('lodash-node')
+  , path = require('path')
+  , fs = require('fs')
   // Generator uniq id for documents
   , getUID = function () { return _.uniqueId('file-') }
   , Documents = {}
@@ -106,15 +108,15 @@ _.extend(Document.prototype, {
   }
   /**
    * exports data for each user
-   * @returns {*}
+   * @returns {Object}
    */
   , exportPublicData: function () {
     return _.extend( this.exportOnlyId()
-      , { users: _.map( this.collaborators
+      , { users: _.map(this.collaborators
         , function (collaborator) {
           return collaborator.exportPublicData()
-        }
-      )
+        })
+        , content: this.getDocument()
       }
     )
   }
@@ -128,5 +130,11 @@ _.extend(Document.prototype, {
     }
 
     return color
+  }
+
+  , getDocument: function () {
+    var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + this.documentId
+
+    return fs.existsSync(pathToDoc) ?  fs.readFileSync(pathToDoc, 'utf8') : null
   }
 })

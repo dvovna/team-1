@@ -41,29 +41,25 @@ Team1 = {
    * Create interface for document
    */
   , buildDocumentInterface: function (document) {
-    var self = this
-
     this.Roster = new Team1.Roster()
     this.Editor = new Team1.Editor()
 
     this.doc.subscribe()
 
-    this.doc.whenReady(function () {
-      if (!self.doc.type) self.doc.create('text')
+    this.doc.whenReady(_.bind(function () {
+      if (!this.doc.type) this.doc.create('text')
 
-      if (self.doc.type && self.doc.type.name === 'text')
-        self.doc.attachCodeMirror(self.Editor.codeEditor)
-    })
+      if (this.doc.type && this.doc.type.name === 'text')
+        this.doc.attachCodeMirror(this.Editor.codeEditor)
+
+      if(document.content)
+        this.Editor.codeEditor.getDoc().setValue(document.content)
+    }, this))
 
     if (document.users)
       this.Roster.fillList(document.users)
 
-    if (document.id) {
-      window.location.hash = '#' + document.id
-      if (Team1.Roster.getUsersCount() == 1) {
-        this.loadDocument(document.id)
-      }
-    }
+    window.location.hash = '#' + document.id
   }
 
   , openDocument: function () {
@@ -166,8 +162,6 @@ Team1 = {
         , dataType: 'json'
         , data: JSON.stringify(docContentObj)
         , success: function (doc) {
-          console.log('success')
-          console.log(doc.value)
           if (doc !== null) {
             Team1.Editor.codeEditor.getDoc().setValue(doc.value)
           }
@@ -190,14 +184,14 @@ $(document).ready(function () {
   })
 })
 
-window.onbeforeunload = function () {
-  if (Team1.Roster.getUsersCount() === 1) {
-    Team1.saveDocument()
-  }
-}
-
-window.onunload = function () {
-  if (Team1.Roster.getUsersCount() === 1) {
-    Team1.saveDocument()
-  }
-}
+//window.onbeforeunload = function () {
+//  if (Team1.Roster.getUsersCount() === 1) {
+//    Team1.saveDocument()
+//  }
+//}
+//
+//window.onunload = function () {
+//  if (Team1.Roster.getUsersCount() === 1) {
+//    Team1.saveDocument()
+//  }
+//}

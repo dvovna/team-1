@@ -7,11 +7,7 @@ var http = require('http')
   , path = require('path')
 
 
-
-
-
 function saveDocument (jsonDoc) {
-
   if (!fs.existsSync(__dirname + path.sep + 'savedDocuments')) {
     fs.mkdirSync(__dirname + path.sep + 'savedDocuments')
   }
@@ -20,16 +16,10 @@ function saveDocument (jsonDoc) {
   + path.sep + jsonDoc.docName, jsonDoc.docContent )
 }
 
-
 function getDocument (docId) {
   var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + docId
 
-  if (fs.existsSync(pathToDoc)) {
-    return fs.readFileSync(pathToDoc, 'utf8')
-  }
-  else {
-    return null
-  }
+  return fs.existsSync(pathToDoc) ?  fs.readFileSync(pathToDoc, 'utf8') : null
 }
 
 
@@ -77,7 +67,6 @@ exports.start = function (config) {
               var docJSON = JSON.stringify(docObj)
 
               if (docJSON !== null) {
-                console.log(docJSON)
                 response.end(docJSON)
               }
               else {
