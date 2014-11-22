@@ -5,7 +5,7 @@ var _ = require('lodash-node')
   , backend = livedb.client(livedb.memory())
   , share = sharejs.server.createClient({ backend: backend })
 
-  , getUID = function () { return _.uniqueId('user-') }
+  , getUID = function () { return _.uniqueId('users-') }
 
   , Documents = require('../documents')
   , User = module.exports = function (options) {
@@ -55,6 +55,7 @@ _.extend(User.prototype, {
       this.onMetaEvent(data)
       return;
     }
+
     return this._stream.push(data)
   }
   , onClose: function (reason) {
@@ -95,6 +96,7 @@ _.extend(User.prototype, {
   }
 
   , openDocument: function (document) {
+    document = _.extend(document, {backend: backend})
     this.document = Documents.factory(document).addCollaborator(this)
     return this.emit({ a: 'open'
       , user: this.exportPrivateData()

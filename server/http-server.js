@@ -6,23 +6,6 @@ var http = require('http')
   , isStarted = false
   , path = require('path')
 
-
-function saveDocument (jsonDoc) {
-  if (!fs.existsSync(__dirname + path.sep + 'savedDocuments')) {
-    fs.mkdirSync(__dirname + path.sep + 'savedDocuments')
-  }
-
-  fs.writeFileSync( __dirname + path.sep + 'savedDocuments'
-  + path.sep + jsonDoc.docName, jsonDoc.docContent )
-}
-
-function getDocument (docId) {
-  var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + docId
-
-  return fs.existsSync(pathToDoc) ?  fs.readFileSync(pathToDoc, 'utf8') : null
-}
-
-
 exports.start = function (config) {
   if (config && !isStarted) {
     try {
@@ -47,35 +30,6 @@ exports.start = function (config) {
 
             response.end(JSON.stringify(files))
           })
-        }
-        else if (request.method == 'POST') {
-          var body = ''
-          request.on('data', function (data) {
-            body += data
-          });
-          request.on('end', function () {
-            var jsonBody = JSON.parse(body)
-            if (jsonBody.operation == 'save') {
-              saveDocument(jsonBody)
-            }
-            else if (jsonBody.operation == 'get') {
-              var docContent = getDocument(jsonBody.docName)
-              var docObj = {
-                value: docContent
-              }
-
-              var docJSON = JSON.stringify(docObj)
-
-              if (docJSON !== null) {
-                response.end(docJSON)
-              }
-              else {
-                response.end()
-              }
-
-            }
-
-          });
         }
         else {
           fs.readFile(config.index, function (err, page) {

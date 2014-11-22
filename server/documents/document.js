@@ -5,21 +5,22 @@ var _ = require('lodash-node')
   , getUID = function () { return _.uniqueId('file-') }
   , Documents = {}
   , Document = module.exports = function (props) {
-      var id
+    var id
 
-      props = props || {}
-      id = this.id = props.id || getUID()
+    props = props || {}
+    id = this.id = props.id || getUID()
 
-      if (Documents[id] instanceof Document) return Documents[id]
+    if (Documents[id] instanceof Document) return Documents[id]
 
-      this.collaborators = []
-      this.availableColors = ['#36D7B7', '#19B5FE', '#BF55EC', '#F62459',
-        '#FFA400', '#044F67', '#CA6924', '#ABB7B7', '#26C281', '#5D8CAE']
-      this.props = props
+    this.collaborators = []
+    this.availableColors = ['#36D7B7', '#19B5FE', '#BF55EC', '#F62459',
+      '#FFA400', '#044F67', '#CA6924', '#ABB7B7', '#26C281', '#5D8CAE']
+    this.props = props
+    this.backend = this.props.backend
 
-      delete this.props.id
-      Documents[id] = this
-    }
+    delete this.props.id
+    Documents[id] = this
+  }
 
 _.extend(Document.prototype, {
   /**
@@ -81,10 +82,17 @@ _.extend(Document.prototype, {
    */
   , removeCollaborator: function (collaborator) {
     if (this.isPresent(collaborator)) {
+      if (this.collaborators.length === 1) {
+        this.saveDocument(collaborator)
+      }
       _.pull(this.collaborators, collaborator)
-      this.notifyCollaborators({ a: 'leave'
+
+      this.notifyCollaborators(
+        { a: 'leave'
         , user: collaborator.exportOnlyId()
-      })
+        }
+      )
+
       this.restoreColor(collaborator.getColor())
     }
     return this
@@ -133,8 +141,21 @@ _.extend(Document.prototype, {
   }
 
   , getDocument: function () {
-    var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + this.documentId
+    var pathToDoc = __dirname + path.sep + 'savedDocuments' + path.sep + this.id
 
     return fs.existsSync(pathToDoc) ?  fs.readFileSync(pathToDoc, 'utf8') : null
+  }
+
+  , saveDocument: function () {
+    this.backend.fetch('users-' + this.id, "seph", _.bind(this.writeToFile, this))
+  }
+
+  , writeToFile: function (err, content) {
+    if (!fs.existsSync(__dirname + path.sep + 'savedDocuments')) {
+      fs.mkdirSync(__dirname + path.sep + 'savedDocuments')
+    }
+
+    fs.writeFileSync(__dirname + path.sep + 'savedDocuments'
+      + path.sep + this.id, content.data)
   }
 })
