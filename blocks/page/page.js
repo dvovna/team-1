@@ -1,5 +1,4 @@
 var Team1 = Team1 || {}
-var Host = window.location.hostname + ':7900'
 
 Team1 = {
   start: function (options) {
@@ -23,10 +22,7 @@ Team1 = {
   , getDocIdFromHash: function () {
     return window.location.hash.replace('#', '')
   }
-  /**
-   * Simple auth.
-   * @returns {jQuery.Deferred}
-   */
+
   , auth: function () {
     var user = {
       title: window.prompt('Your name:')
@@ -132,13 +128,14 @@ Team1 = {
     )
   }
 
-  , getSocket : function () {
-    return new WebSocket('ws://' + Host)
+  , getSocket : function (url) {
+    return new WebSocket(url)
   }
 }
 
 $(document).ready(function () {
-  Team1.start({
-    socketUrl: 'http://' + Host
-  })
+  Team1.start(
+    { socketUrl: 'ws://' + window.location.hostname + ":7900"
+    }
+  )
 })

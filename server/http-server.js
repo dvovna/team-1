@@ -4,7 +4,6 @@ var http = require('http')
   , logPrefix = 'HTTP Server'
   , log = require('npmlog')
   , isStarted = false
-  , path = require('path')
 
 exports.start = function (config) {
   if (config && !isStarted) {
