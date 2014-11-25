@@ -5,12 +5,10 @@ var gulp = require('gulp')
   , watch = require('gulp-watch')
   , streamqueue = require('streamqueue')
   , karma = require('karma').server
-  , rimraf = require('rimraf')
   , clean = require('gulp-clean')
   , uglify = require('gulp-uglify')
   , minifyCSS = require('gulp-minify-css')
   , minifyHTML = require('gulp-minify-html')
-  , runSequence = require('run-sequence')
   , env = process.env.NODE_ENV || 'DEV'
   , resourses =
     { css:
@@ -45,32 +43,54 @@ gulp.task('config', function () {
 })
 
 gulp.task('index.min.html', function () {
-  runSequence(['html_min', 'js_min', 'css_min'], function () {
-    gulp.src(
-      [ 'dist/**/*.html'
-        , 'dist/**/*.css'
-        , 'dist/**/*.js'
-      ]
-    )
+  var opts = {comments:true, spare:true}
+
+  streamqueue(
+    {objectMode: true}
+    , gulp.src('blocks/**/*.html')
       .pipe(concat('index.html'))
-      .pipe(gulp.dest('./'))
-  })
+      .pipe(minifyHTML(opts))
+    , gulp.src(resourses.js)
+      .pipe(concat('index.js'))
+      .pipe(uglify())
+      .pipe(wrap('<script><%= contents %></script>'))
+
+    , gulp.src(resourses.css)
+      .pipe(concat('index.css'))
+      .pipe(autoprefixer(
+        { browsers: ['last 3 versions']
+        , cascade: true
+        }
+      ))
+      .pipe(wrap('<style><%= contents %></style>'))
+      .pipe(minifyCSS({keepBreaks:false}))
+    )
+    .pipe(concat('index.html'))
+    .pipe(gulp.dest('./'))
 })
 
 gulp.task('index.html', function () {
-  runSequence(['html', 'js', 'css'], function () {
-    gulp.src(
-      [ 'dist/**/*.html'
-        , 'dist/**/*.css'
-        , 'dist/**/*.js'
-      ]
-    )
+  streamqueue(
+    {objectMode: true}
+    , gulp.src('blocks/**/*.html')
       .pipe(concat('index.html'))
-      .pipe(gulp.dest('./'))
-  })
+    , gulp.src(resourses.js)
+      .pipe(concat('index.js'))
+      .pipe(wrap('<script><%= contents %></script>'))
+    , gulp.src(resourses.css)
+      .pipe(concat('index.css'))
+      .pipe(autoprefixer(
+        { browsers: ['last 3 versions']
+          , cascade: true
+        }
+      ))
+      .pipe(wrap('<style><%= contents %></style>'))
+  )
+    .pipe(concat('index.html'))
+    .pipe(gulp.dest('./'))
 })
 
-gulp.task('watch', function () {
+gulp.task('watch', ['config'], function () {
   watch([ 'blocks/**/*.html'
         , 'blocks/**/*.css'
         , 'blocks/**/*.js']
@@ -92,78 +112,11 @@ gulp.task('tdd', function (done) {
 })
 
 gulp.task('clean', function (cb) {
-  gulp.src('index.html', {read: false})
-    .pipe(clean());
-  gulp.src('index.min.html', {read: false})
-    .pipe(clean());
-  rimraf('dist', cb);
+  gulp.src(
+    [ 'index.html'
+    , 'config/current.json']
+    , {read: false})
+    .pipe(clean())
 })
 
-gulp.task('css', function () {
-  streamqueue(
-    { objectMode: true }
-  , gulp
-    .src(resourses.css)
-
-    .pipe(concat('index.css'))
-  )
-  .pipe(autoprefixer(
-      { browsers: ['last 3 versions']
-      , cascade: true
-      }
-    ))
-    .pipe(wrap('<style><%= contents %></style>'))
-    .pipe(gulp.dest('dist/css'))
-})
-gulp.task('css_min', function () {
-  streamqueue(
-    { objectMode: true }
-  , gulp
-    .src(resourses.css)
-    .pipe(concat('index.css'))
-  )
-  .pipe(autoprefixer(
-      { browsers: ['last 3 versions']
-      , cascade: true
-      }
-    ))
-    .pipe(wrap('<style><%= contents %></style>'))
-    .pipe(minifyCSS({keepBreaks:false}))
-    .pipe(gulp.dest('dist/css'))
-})
-gulp.task('html', function () {
-  gulp.src('blocks/**/*.html')
-    .pipe(concat('index.html'))
-    .pipe(gulp.dest('dist/html'))
-})
-gulp.task('html_min', function () {
-  var opts = {comments:true, spare:true}
-
-  gulp.src('blocks/**/*.html')
-    .pipe(concat('index.html'))
-    .pipe(minifyHTML(opts))
-    .pipe(gulp.dest('dist/html'))
-})
-gulp.task('js', function () {
-  streamqueue(
-      {objectMode: true},
-      gulp.src(resourses.js)
-    .pipe(concat('index.js'))
-    .pipe(wrap('<script><%= contents %></script>'))
-  )
-    .pipe(gulp.dest('dist/js'))
-})
-gulp.task('js_min', function () {
-  streamqueue(
-      {objectMode: true},
-      gulp.src(resourses.js)
-    .pipe(concat('index.js'))
-    .pipe(uglify())
-    .pipe(wrap('<script><%= contents %></script>'))
-  )
-    .pipe(gulp.dest('dist/js'))
-})
-
-gulp.task('watch', runSequence(['config', 'index.html', 'watch']))
-
-gulp.task('default', runSequence('config', 'index.min.html'))
+gulp.task('default', ['config', 'index.min.html'])

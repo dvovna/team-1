@@ -38,8 +38,6 @@
     "lodash-node": "^2.4.1",
     "npmlog": "^0.1.1",
     "ot": "0.0.14",
-    "rimraf": "^2.2.8",
-    "run-sequence": "^1.0.1",
     "share": "^0.7.3",
     "socket.io": "^1.1.0",
     "streamqueue": "^0.1.1",
