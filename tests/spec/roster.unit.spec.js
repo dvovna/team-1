@@ -19,9 +19,12 @@ describe("Roster Tests", function () {
       ]
     }
 
-    jasmine.getFixtures().fixturesPath="base/blocks/page/"
+    jasmine.getFixtures().fixturesPath="base/blocks/"
 
-    loadFixtures("page.html")
+    loadFixtures(
+      "page/page.html"
+    , "roster/user-tpl.html"
+    )
 
     this.testObj = new Team1.Roster()
   })

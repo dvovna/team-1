@@ -18,14 +18,14 @@ var gulp = require('gulp')
     ]
     , js:
       [ 'libs/jquery/dist/jquery.min.js'
-        , 'libs/lodash/dist/lodash.min.js'
-        , 'libs/codemirror/lib/codemirror.js'
-        , 'node_modules/share/webclient/share.uncompressed.js'
-        , 'libs/share-codemirror/share-codemirror.js'
-        , 'libs/codemirror/mode/javascript/javascript.js'
-        , 'libs/switchery/dist/switchery.min.js'
-        , 'blocks/page/page.js'
-        , 'blocks/**/*.js'
+      , 'libs/lodash/dist/lodash.min.js'
+      , 'libs/codemirror/lib/codemirror.js'
+      , 'node_modules/share/webclient/share.uncompressed.js'
+      , 'libs/share-codemirror/share-codemirror.js'
+      , 'libs/codemirror/mode/javascript/javascript.js'
+      , 'libs/switchery/dist/switchery.min.js'
+      , 'blocks/page/page.js'
+      , 'blocks/**/*.js'
       ]
   }
 

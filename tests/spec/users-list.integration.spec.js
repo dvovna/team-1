@@ -24,23 +24,24 @@ describe("Page Integration Tests", function () {
       socketHandlers['leave'] = handler
     }
     , setOnMetaMessageFn: function (handler) {
-      socketHandlers['leave'] = handler
+      socketHandlers['meta'] = handler
     }
     }
   }
 
   function before () {
     jasmine.getFixtures().fixturesPath = "base/"
+    this.promptSpy = spyOn(window, "prompt").and.returnValue('')
+    spyOn($.fn, "ready").and.callFake(function () {}) //to prevent from running App in index.html, see page.js
+
     loadFixtures("index.html")
 
     createTestSocket.call(this);
 
-    this.promptSpy = spyOn(window, "prompt")
-
     spyOn(window, "WebSocket").and.returnValue(this.testSocket)
     spyOn(window.sharejs, "Connection").and.returnValue({
       get: function () {
-        return getTestDocObj();
+        return getTestDocObj()
       }
     })
 
@@ -121,6 +122,8 @@ describe("Page Integration Tests", function () {
     expect(this.usersListEl.find(".roster-item").text()).toBe("test1")
   }
   function onRemoveExistingUserTest() {
+    Team1.start({socketUrl: "/test"})
+
     socketHandlers['open'].call({}, {})
 
     this.usersListEl.append("<li id='12'>test</li>")
