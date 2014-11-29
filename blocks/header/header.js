@@ -8,7 +8,7 @@ Team1.Header = function () {
 
   $.get('/theme', _.bind(function (themes) {
     _.each(JSON.parse(themes), _.bind(function(theme) {
-      this.themesSelectboxEl.html(this.themeTemplate({name: theme.split('.')[0]}))
+      this.themesSelectboxEl.append(this.themeTemplate({name: theme.split('.')[0]}))
     }, this))
   }, this))
 
