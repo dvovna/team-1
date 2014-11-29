@@ -11,7 +11,7 @@ Team1.Editor = function (options) {
     }
   )
 
-  this.getThemesList()
+  //this.getThemesList()
 
   this.changeEditorMode()
 
@@ -174,17 +174,11 @@ Team1.Editor.prototype.setDefaultEditorMode = function (skinMode) {
   $header.addClass("header--" + skinMode)
   $roster.addClass("roster--" + skinMode)
 
-  if (skinMode == this.SKIN_MODES.LIGHT) {
+  if (skinMode == Team1.SKIN_MODES.LIGHT) {
     $switchMode.click()
   }
 }
-
-Team1.Editor.prototype.SKIN_MODES = {
-  LIGHT: 'light',
-  DARK: 'dark'
-}
-
 Team1.Editor.prototype.defaults = {
-  editorMode: Team1.Editor.prototype.SKIN_MODES.LIGHT,
+  editorMode: Team1.SKIN_MODES.LIGHT,
   themeApiUrl: "/theme"
 }

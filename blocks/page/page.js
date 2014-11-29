@@ -4,7 +4,7 @@ Team1 = {
   start: function (options) {
     _.bindAll(this)
 
-    new Switchery(document.querySelector('.js-switch'))
+    this.header = new Team1.Header()
 
     this.documentId = this.getDocId()
 
@@ -131,6 +131,11 @@ Team1 = {
   , getSocket : function (url) {
     return new WebSocket(url)
   }
+}
+
+Team1.SKIN_MODES = {
+  LIGHT: 'light',
+  DARK: 'dark'
 }
 
 $(document).ready(function () {

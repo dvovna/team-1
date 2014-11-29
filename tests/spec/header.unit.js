@@ -7,7 +7,7 @@ describe("Header Unit Tests", function () {
   it("should init switchery", initSwitchery)
   it("should load skins", loadsSkins)
   it("should update skins selectbox with loaded skins", updatesDropdownWithSkins)
-  it("should trigger mode_switch event with mode name")
+  it("should trigger mode_switch event with mode name", triggerModeSwitchEvent)
   it("should trigger skin change event with skin name")
 
   function before() {
@@ -34,7 +34,7 @@ describe("Header Unit Tests", function () {
   function initSwitchery() {
     init()
 
-    expect(this.SwitcherySpy).toHaveBeenCalledWith(document.querySelector('.js-switch'))
+    expect(this.SwitcherySpy).toHaveBeenCalledWith($('.js-switch')[0], {})
   }
 
   function loadsSkins() {
@@ -48,10 +48,19 @@ describe("Header Unit Tests", function () {
 
     jasmine.Ajax.requests.mostRecent().response({
       "status": 200,
-      "contentType": 'json',
-      "responseText": JSON.stringify(["testthemename.css"])
+      "contentType": 'text/plain',
+      "responseText": '["testthemename.css"]'
     })
 
     expect($("#themes-list").find("[value='testthemename']").length).toBe(1)
+  }
+
+  function triggerModeSwitchEvent() {
+    init()
+
+    spyOn($.fn, "trigger").and.callThrough()
+    $("#switcher").prop("checked", false).trigger('change')
+
+    expect($.fn.trigger).toHaveBeenCalledWith("skin-mode-change", Team1.SKIN_MODES.DARK)
   }
 })
