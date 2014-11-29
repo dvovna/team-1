@@ -22,6 +22,6 @@ exec('npm install', function (err) {
       exec('node server.js', function (err) {
         if (err !== null) console.error('Exec error \'node server.js\': ' + err)
       })
-    });
+    })
   })
 })

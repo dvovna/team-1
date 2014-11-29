@@ -5,12 +5,13 @@ module.exports = function(config) {
     , files:
       [ 'libs/jquery/dist/jquery.min.js'
       , 'libs/lodash/dist/lodash.min.js'
-      //, 'libs/codemirror/mode/javascript/javascript.js'
       , 'libs/switchery/dist/switchery.min.js'
       , 'blocks/page/page.js'
+      , 'blocks/header/header.js'
       , 'blocks/editor/editor.js'
       , 'blocks/roster/roster.js'
-      , 'tests/**/*spec.js'
+      , 'tests/**/*unit.js'
+      , 'tests/**/*intgr.js'
       , 'blocks/**/*.html'
       , 'index.html'
     ]

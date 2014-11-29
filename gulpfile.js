@@ -99,13 +99,13 @@ gulp.task('watch', ['config'], function () {
   })
 })
 
-gulp.task('test', function (done) {
+gulp.task('test', ['index.html'], function (done) {
   karma.start({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
   }, done)
 })
-gulp.task('tdd', function (done) {
+gulp.task('tdd', ['index.html'], function (done) {
   karma.start({
     configFile: __dirname + '/karma.conf.js'
   }, done)

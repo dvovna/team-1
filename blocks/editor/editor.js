@@ -1,23 +1,23 @@
 var Team1 = Team1 || {}
 
-Team1.Editor = function () {
-  _.bindAll(this, "onCursorActivity")
+Team1.Editor = function (options) {
+  this.options = _.extend(options || {}, this.defaults)
 
   this.codeEditor = CodeMirror.fromTextArea($("#docEditor")[0],
-    {
-      lineNumbers: true
-      , matchBrackets: true
-      , foldGutter: true        //сворачивание кода
-      , mode: "javascript"
-    })
+    { lineNumbers: true
+    , matchBrackets: true
+    , foldGutter: true        //сворачивание кода
+    , mode: "javascript"
+    }
+  )
 
   this.getThemesList()
 
   this.changeEditorMode()
 
-  this.getDefaultEditorMode()
+  this.setDefaultEditorMode(this.options.editorMode)
 
-  this.codeEditor.on("cursorActivity", this.onCursorActivity)
+  this.codeEditor.on("cursorActivity", _.bind(this.onCursorActivity, this))
   this.cursors = []
   this.selections = []
 }
@@ -114,19 +114,18 @@ Team1.Editor.prototype.removeSelection = function (id) {
 }
 
 Team1.Editor.prototype.getThemesList = function () {
-  var self = this
-
-  $.get("/theme", function (data) {
-    self.themesList = JSON.parse(data)
-  }).done(function () {
-    self.setThemesList()
-  })
+  $.get(this.options.themeApiUrl, _.bind(function (data) {
+    this.themesList = JSON.parse(data)
+  }, this)).done(_.bind(function () {
+    this.setThemesList()
+  }, this))
 }
 
 Team1.Editor.prototype.setThemesList = function () {
   var $themesList = $(".control__themelist")
 
   this.themesList.forEach(function (theme) {
+    console.log("theme", theme)
     $themesList.append("<option>" + theme.slice(0, -4) + "</option>")
   })
 
@@ -136,26 +135,20 @@ Team1.Editor.prototype.setThemesList = function () {
 }
 
 Team1.Editor.prototype.addHandlerToThemeOption = function () {
-  var self = this
-    , theme
-    , $themesList = $(".control__themelist")
+  var $themesList = $(".control__themelist")
 
-  $themesList.on("change", function () {
-    theme = $(this).find("option:selected").text()
-
-    self.setTheme(theme)
-  })
+  $themesList.on("change", _.bind(function () {
+    this.setTheme($themesList.find("option:selected").text())
+  }, this))
 }
 
 Team1.Editor.prototype.setTheme = function (theme) {
-  var self = this
-
-  $.get("/theme", {name: theme})
-    .done(function (data) {
+  $.get(this.options.themeApiUrl, {name: theme})
+    .done(_.bind(function (data) {
       $(".theme_style").text(JSON.parse(data))
-      self.codeEditor.setOption("theme", theme)
-    }).fail(function () {
-      console.log("Error downloading theme")
+      this.codeEditor.setOption("theme", theme)
+    }, this)).fail(function () {
+      console.warn("Error downloading theme")
     })
 }
 
@@ -174,21 +167,25 @@ Team1.Editor.prototype.changeEditorMode = function () {
   })
 }
 
-Team1.Editor.prototype.getDefaultEditorMode = function () {
-  var editorMode = "light" //light or dark
-
-  this.setDefaultEditorMode(editorMode);
-}
-Team1.Editor.prototype.setDefaultEditorMode = function (editorMode) {
+Team1.Editor.prototype.setDefaultEditorMode = function (skinMode) {
   var $header = $(".header")
     , $roster = $(".roster")
     , $switchMode = $(".js-editor-mode-switch")
 
-  $header.addClass("header--" + editorMode)
-  $roster.addClass("roster--" + editorMode)
+  $header.addClass("header--" + skinMode)
+  $roster.addClass("roster--" + skinMode)
 
-  if (editorMode == "light") {
-    // $switchMode.prop("checked", true) // don't work
-    $switchMode.click();
+  if (skinMode == this.SKIN_MODES.LIGHT) {
+    $switchMode.click()
   }
+}
+
+Team1.Editor.prototype.SKIN_MODES = {
+  LIGHT: 'light',
+  DARK: 'dark'
+}
+
+Team1.Editor.prototype.defaults = {
+  editorMode: Team1.Editor.prototype.SKIN_MODES.LIGHT,
+  themeApiUrl: "/theme"
 }

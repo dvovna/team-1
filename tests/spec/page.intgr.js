@@ -3,12 +3,16 @@ describe("Page Integration Tests", function () {
 
   beforeEach(before)
 
-  it("should show promt on init", showPromptTest)
-  it("should send socket message on ok click with user's name", sendSocketMessageTest)
-  it("should fill user's list on open", onOpenFillUsersListTest)
-  it("should remove existing user from list on close", onRemoveExistingUserTest)
-  it("should add new user to list on join", onJoinNewUserTest)
+  describe("Initialization", function () {
+    it("should show promt on init", showPromptTest)
+    it("should send socket message on ok click with user's name", sendSocketMessageTest)
+  })
 
+  describe("Roster manipulations", function () {
+    it("should fill user's list on open", onOpenFillUsersListTest)
+    it("should remove existing user from list on close", onRemoveExistingUserTest)
+    it("should add new user to list on join", onJoinNewUserTest)
+  })
 
   function getTestDocObj() {
     return {
@@ -31,8 +35,10 @@ describe("Page Integration Tests", function () {
 
   function before () {
     jasmine.getFixtures().fixturesPath = "base/"
+
     this.promptSpy = spyOn(window, "prompt").and.returnValue('')
-    spyOn($.fn, "ready").and.callFake(function () {}) //to prevent from running App in index.html, see page.js
+    //to prevent from running App in index.html, see page.js
+    spyOn($.fn, "ready").and.callFake(function () {})
 
     loadFixtures("index.html")
 
