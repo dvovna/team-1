@@ -19,13 +19,12 @@ describe("Header Unit Tests", function () {
 
     mocked.Switchery = window.Switchery || {}
     window.Switchery = this.SwitcherySpy
-    mocked.AjaxGet = $.get || {}
-    $.get = this.AjaxGetSpy
+    jasmine.Ajax.install()
   }
 
   function after() {
     window.Switchery = mocked.Switchery
-    $.get = mocked.AjaxGet
+    jasmine.Ajax.uninstall()
   }
 
   function init() {
@@ -41,13 +40,18 @@ describe("Header Unit Tests", function () {
   function loadsSkins() {
     init()
 
-    expect(this.AjaxGetSpy).toHaveBeenCalledWith('/theme', jasmine.any(Function))
+    expect(jasmine.Ajax.requests.mostRecent().url).toBe('/theme')
   }
 
   function updatesDropdownWithSkins() {
-    this.AjaxGetSpy.and.returnValue(['testfilename'])
     init()
 
-    expect($("#themes-list").find("[value=testfilename]")).toBeInDOM()
+    jasmine.Ajax.requests.mostRecent().response({
+      "status": 200,
+      "contentType": 'json',
+      "responseText": JSON.stringify(["testthemename.css"])
+    })
+
+    expect($("#themes-list").find("[value='testthemename']").length).toBe(1)
   }
 })

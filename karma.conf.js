@@ -1,6 +1,6 @@
 module.exports = function(config) {
   config.set(
-    { frameworks: ['jasmine-jquery', 'jasmine']
+    { frameworks: ['jasmine-jquery', 'jasmine-ajax', 'jasmine']
 
     , files:
       [ 'libs/jquery/dist/jquery.min.js'

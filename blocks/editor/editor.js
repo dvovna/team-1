@@ -125,7 +125,6 @@ Team1.Editor.prototype.setThemesList = function () {
   var $themesList = $(".control__themelist")
 
   this.themesList.forEach(function (theme) {
-    console.log("theme", theme)
     $themesList.append("<option>" + theme.slice(0, -4) + "</option>")
   })
 
