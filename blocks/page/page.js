@@ -5,6 +5,9 @@ Team1 = {
     _.bindAll(this)
 
     this.header = new Team1.Header()
+    this.header
+      .on("theme-change", this.onEditorThemeChange)
+      .on("skin-mode-change", this.onSkinModeChange)
 
     this.documentId = this.getDocId()
 
@@ -126,6 +129,23 @@ Team1 = {
       , color : data.color
       }
     )
+  }
+
+  , onEditorThemeChange: function (e, theme) {
+    this.Editor.setTheme(theme)
+  }
+
+  , onSkinModeChange: function (e, skinMode) {
+    var $header = $(".header")
+      , $roster = $(".roster")
+
+    if (skinMode === Team1.SKIN_MODES.LIGHT) {
+      $header.removeClass("header--dark").addClass("header--light")
+      $roster.removeClass("roster--dark").addClass("roster--light")
+    } else {
+      $header.removeClass("header--light").addClass("header--dark")
+      $roster.removeClass("roster--light").addClass("roster--dark")
+    }
   }
 
   , getSocket : function (url) {

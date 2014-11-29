@@ -1,7 +1,9 @@
 var Team1 = Team1 || {}
 
 Team1.Header = function () {
-  this.themesSelectboxEl = $("#themes-list")
+  this.$el = $("header")
+  this.$styleEl = $(".theme_style")
+  this.themesSelectboxEl = this.$el.find("#themes-list")
   this.themeTemplate = _.template($("#theme-tpl").html())
   this.switcherEl = $("#switcher")
   this.Switcher = new Switchery($('.js-switch').get(0), {})
@@ -13,7 +15,11 @@ Team1.Header = function () {
   }, this))
 
   this.themesSelectboxEl.on("change", _.bind(function () {
-    $(this).trigger("theme-change", this.themesSelectboxEl.val())
+    var themeName = this.themesSelectboxEl.val()
+    $.get("/theme", {name: themeName}, _.bind(function (data) {
+      this.$styleEl.text(JSON.parse(data))
+      this.$el.trigger("theme-change", themeName)
+    }, this))
   }, this))
 
   this.switcherEl.on("change", _.bind(function () {
@@ -21,6 +27,8 @@ Team1.Header = function () {
       ? Team1.SKIN_MODES.LIGHT
       : Team1.SKIN_MODES.DARK
 
-      $(this).trigger("skin-mode-change", skinMode)
+      this.$el.trigger("skin-mode-change", skinMode)
   }, this))
+
+  return _.extend(this.$el, this)
 }

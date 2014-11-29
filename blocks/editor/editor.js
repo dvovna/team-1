@@ -11,12 +11,6 @@ Team1.Editor = function (options) {
     }
   )
 
-  //this.getThemesList()
-
-  this.changeEditorMode()
-
-  this.setDefaultEditorMode(this.options.editorMode)
-
   this.codeEditor.on("cursorActivity", _.bind(this.onCursorActivity, this))
   this.cursors = []
   this.selections = []
@@ -113,71 +107,10 @@ Team1.Editor.prototype.removeSelection = function (id) {
   }
 }
 
-Team1.Editor.prototype.getThemesList = function () {
-  $.get(this.options.themeApiUrl, _.bind(function (data) {
-    this.themesList = JSON.parse(data)
-  }, this)).done(_.bind(function () {
-    this.setThemesList()
-  }, this))
-}
-
-Team1.Editor.prototype.setThemesList = function () {
-  var $themesList = $(".control__themelist")
-
-  this.themesList.forEach(function (theme) {
-    $themesList.append("<option>" + theme.slice(0, -4) + "</option>")
-  })
-
-  $("body").append("<style class='theme_style'>")
-
-  this.addHandlerToThemeOption()
-}
-
-Team1.Editor.prototype.addHandlerToThemeOption = function () {
-  var $themesList = $(".control__themelist")
-
-  $themesList.on("change", _.bind(function () {
-    this.setTheme($themesList.find("option:selected").text())
-  }, this))
-}
-
 Team1.Editor.prototype.setTheme = function (theme) {
-  $.get(this.options.themeApiUrl, {name: theme})
-    .done(_.bind(function (data) {
-      $(".theme_style").text(JSON.parse(data))
-      this.codeEditor.setOption("theme", theme)
-    }, this)).fail(function () {
-      console.warn("Error downloading theme")
-    })
+  this.codeEditor.setOption("theme", theme)
 }
 
-Team1.Editor.prototype.changeEditorMode = function () {
-  var $header = $(".header")
-    , $roster = $(".roster")
-
-  $(".js-editor-mode-switch").on("change", function () {
-    if ($(this).is(":checked")) {
-      $header.removeClass("header--dark").addClass("header--light")
-      $roster.removeClass("roster--dark").addClass("roster--light")
-    } else {
-      $header.removeClass("header--light").addClass("header--dark")
-      $roster.removeClass("roster--light").addClass("roster--dark")
-    }
-  })
-}
-
-Team1.Editor.prototype.setDefaultEditorMode = function (skinMode) {
-  var $header = $(".header")
-    , $roster = $(".roster")
-    , $switchMode = $(".js-editor-mode-switch")
-
-  $header.addClass("header--" + skinMode)
-  $roster.addClass("roster--" + skinMode)
-
-  if (skinMode == Team1.SKIN_MODES.LIGHT) {
-    $switchMode.click()
-  }
-}
 Team1.Editor.prototype.defaults = {
   editorMode: Team1.SKIN_MODES.LIGHT,
   themeApiUrl: "/theme"
