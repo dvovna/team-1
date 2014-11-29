@@ -8,7 +8,7 @@ describe("Header Unit Tests", function () {
   it("should load skins", loadsSkins)
   it("should update skins selectbox with loaded skins", updatesDropdownWithSkins)
   it("should trigger mode_switch event with mode name", triggerModeSwitchEvent)
-  it("should trigger skin change event with skin name")
+  it("should trigger skin change event with skin name", triggerSkinChangeEvent)
 
   function before() {
     jasmine.getFixtures().fixturesPath="base/blocks/"
@@ -62,5 +62,15 @@ describe("Header Unit Tests", function () {
     $("#switcher").prop("checked", false).trigger('change')
 
     expect($.fn.trigger).toHaveBeenCalledWith("skin-mode-change", Team1.SKIN_MODES.DARK)
+  }
+
+  function triggerSkinChangeEvent() {
+    init()
+
+    spyOn($.fn, "trigger").and.callThrough()
+    $("#themes-list").append("<option value='ata'>Oo</option>")
+    $("#themes-list").val("ata").trigger('change')
+
+    expect($.fn.trigger).toHaveBeenCalledWith("theme-change", 'ata')
   }
 })
