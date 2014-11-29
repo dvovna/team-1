@@ -2,16 +2,23 @@ var Team1 = Team1 || {}
 
 Team1 = {
   start: function (options) {
+    this.options = _.extend(options, this.defaults)
+
+    this.$body = $("body")
+
     _.bindAll(this)
 
-    this.header = new Team1.Header()
-    this.header
+    this.setDefaultSkinMode(this.SKIN_MODES.LIGHT)
+
+    this.header = new Team1.Header({
+      themesApi: this.options.themeApiUrl
+    })
       .on("theme-change", this.onEditorThemeChange)
       .on("skin-mode-change", this.onSkinModeChange)
 
     this.documentId = this.getDocId()
 
-    this.socket = this.getSocket(options.socketUrl)
+    this.socket = this.getSocket(this.options.socketUrl)
     this.sjs = new window.sharejs.Connection(this.socket)
     this.doc = this.sjs.get('users-' + this.documentId, 'seph')
 
@@ -135,32 +142,32 @@ Team1 = {
     this.Editor.setTheme(theme)
   }
 
-  , onSkinModeChange: function (e, skinMode) {
-    var $header = $(".header")
-      , $roster = $(".roster")
+  , setDefaultSkinMode: function (skinMode) {
+    this.$body.addClass(skinMode)
+  }
 
-    if (skinMode === Team1.SKIN_MODES.LIGHT) {
-      $header.removeClass("header--dark").addClass("header--light")
-      $roster.removeClass("roster--dark").addClass("roster--light")
-    } else {
-      $header.removeClass("header--light").addClass("header--dark")
-      $roster.removeClass("roster--light").addClass("roster--dark")
-    }
+  , onSkinModeChange: function () {
+    var classesToToggle = this.SKIN_MODES.LIGHT + " " + this.SKIN_MODES.DARK
+    this.$body.toggleClass(classesToToggle)
   }
 
   , getSocket : function (url) {
     return new WebSocket(url)
   }
 }
-
 Team1.SKIN_MODES = {
-  LIGHT: 'light',
-  DARK: 'dark'
+  LIGHT: 'light'
+, DARK: 'dark'
+}
+
+Team1.defaults = {
+  skinMode: Team1.SKIN_MODES.LIGHT
 }
 
 $(document).ready(function () {
   Team1.start(
     { socketUrl: 'ws://' + window.location.hostname + ":7900"
+    , themeApiUrl: "/theme"
     }
   )
 })

@@ -70,7 +70,11 @@ describe("Header Unit Tests", function () {
     spyOn($.fn, "trigger").and.callThrough()
     $("#themes-list").append("<option value='ata'>Oo</option>")
     $("#themes-list").val("ata").trigger('change')
-
+    jasmine.Ajax.requests.mostRecent().response({
+      "status": 200,
+      "contentType": 'text/plain',
+      "responseText": '["testthemename.css"]'
+    })
     expect($.fn.trigger).toHaveBeenCalledWith("theme-change", 'ata')
   }
 })

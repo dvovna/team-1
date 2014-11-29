@@ -55,3 +55,46 @@ body {
   height: 100%;
 }
 
+body.dark .roster {
+  background-color: #293143;
+  border-right: 1px solid #212936;
+}
+
+body.dark .roster-item {
+  color: #fff;
+}
+
+body.light .roster{
+  border-right: 1px solid #d3d3d3;
+  background-color: #ECF0F1;
+}
+
+body.light .roster-item {
+  color: #2B2F32;
+}
+
+body.dark .header {
+  background-color: #293143;
+  border-bottom: 1px solid #212936;
+}
+
+body.dark .header__logo {
+  background-color: #212936;
+}
+
+body.dark .control__theme {
+  background-color: #293143;
+}
+
+body.light .header {
+  background-color: #ECF0F1;
+  border-bottom: 1px solid #d3d3d3;
+}
+
+body.light .header__logo {
+  background-color: #ABB7B7;
+}
+
+body.light .control__theme {
+  background-color: #ECF0F1;
+}

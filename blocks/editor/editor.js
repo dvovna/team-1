@@ -110,8 +110,3 @@ Team1.Editor.prototype.removeSelection = function (id) {
 Team1.Editor.prototype.setTheme = function (theme) {
   this.codeEditor.setOption("theme", theme)
 }
-
-Team1.Editor.prototype.defaults = {
-  editorMode: Team1.SKIN_MODES.LIGHT,
-  themeApiUrl: "/theme"
-}

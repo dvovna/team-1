@@ -6,7 +6,7 @@ Team1.Header = function () {
   this.themesSelectboxEl = this.$el.find("#themes-list")
   this.themeTemplate = _.template($("#theme-tpl").html())
   this.switcherEl = $("#switcher")
-  this.Switcher = new Switchery($('.js-switch').get(0), {})
+  this.Switcher = new Switchery(this.switcherEl.get(0), {})
 
   $.get('/theme', _.bind(function (themes) {
     _.each(JSON.parse(themes), _.bind(function(theme) {

@@ -87,30 +87,3 @@
 .control__editor-mode img {
   vertical-align: middle;
 }
-
-.header--dark {
-  background-color: #293143;
-  border-bottom: 1px solid #212936;
-}
-
-.header--dark .header__logo {
-  background-color: #212936;
-}
-
-.header--dark .control__theme {
-  background-color: #293143;
-}
-
-.header--light {
-  background-color: #ECF0F1;
-  border-bottom: 1px solid #d3d3d3;
-}
-
-.header--light .header__logo {
-  background-color: #ABB7B7;
-}
-
-.header--light .control__theme {
-  background-color: #ECF0F1;
-}
-
