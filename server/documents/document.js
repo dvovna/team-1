@@ -48,7 +48,7 @@ _.extend(Document.prototype, {
           meta: data.meta
         })
       }
-    }, this)
+    })
     return this
   }
   /**

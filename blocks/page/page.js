@@ -50,6 +50,7 @@ Team1 = {
       , documentId: this.documentId
       , user: this.__user
       })
+    this.doc.setOnMetaMessageFn(this.Editor.onSocketMeta)
 
     this.doc.subscribe()
 
@@ -86,7 +87,7 @@ Team1 = {
     this.doc.setOnOpenMessageFn(this.onSocketOpen)
     this.doc.setOnJoinMessageFn(this.onSocketJoin)
     this.doc.setOnCloseMessageFn(this.onSocketLeave)
-    this.doc.setOnMetaMessageFn(this.onSocketMeta)
+    this.doc.setOnMetaMessageFn(this.Editor.onSocketMeta)
   }
 
   , onSocketJoin: function (data) {
@@ -103,15 +104,6 @@ Team1 = {
       _.extend(this.__user, data.user)
 
     this.buildDocumentInterface(data.document || {})
-  }
-
-  , onSocketMeta : function (data) {
-    this.Editor.updateCursor(
-      { id: data.id
-      , position : data.meta
-      , color : data.color
-      }
-    )
   }
 
   , onEditorThemeChange: function (e, theme) {
