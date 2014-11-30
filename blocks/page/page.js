@@ -4,7 +4,7 @@ Team1 = {
   start: function (options) {
     this.options = _.extend(options, this.defaults)
 
-    this.$body = $("body")
+    this.$body = $('body')
 
     _.bindAll(this)
 
@@ -13,8 +13,8 @@ Team1 = {
     this.header = new Team1.Header({
       themesApi: this.options.themeApiUrl
     })
-      .on("theme-change", this.onEditorThemeChange)
-      .on("skin-mode-change", this.onSkinModeChange)
+      .on('theme-change', this.onEditorThemeChange)
+      .on('skin-mode-change', this.onSkinModeChange)
 
     this.documentId = this.getDocId()
 
@@ -115,7 +115,7 @@ Team1 = {
   }
 
   , onSkinModeChange: function () {
-    var classesToToggle = this.SKIN_MODES.LIGHT + " " + this.SKIN_MODES.DARK
+    var classesToToggle = this.SKIN_MODES.LIGHT + ' ' + this.SKIN_MODES.DARK
     this.$body.toggleClass(classesToToggle)
   }
 

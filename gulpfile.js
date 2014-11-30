@@ -111,7 +111,7 @@ gulp.task('tdd', ['index.html'], function (done) {
   }, done)
 })
 
-gulp.task('clean', function (cb) {
+gulp.task('clean', function () {
   gulp.src(
     [ 'index.html'
     , 'config/current.json']
