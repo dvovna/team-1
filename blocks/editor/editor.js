@@ -44,28 +44,27 @@ Team1.Editor.prototype.onSocketMeta = function (data) {
   )
   this.updateSelection(
     { id: data.id
-    , position: data.meta.listSelections
-    , color: data.color
+      , position: data.meta.listSelections
+      , color: data.color
     }
-  )
-}
+  )}
 //need to impl better way...
-Team1.Editor.prototype.addCursor = function (cursorInfo) {
-  var opt = { className: this.getCursorClass(cursorInfo, false) }
+Team1.Editor.prototype.addCursor = function (info) {
+  var opt = { className: this.getCursorClass(info, false) }
     , to =
-    { ch: cursorInfo.position.ch + 1
-    , line: cursorInfo.position.line
+    { ch: info.position.ch + 1
+    , line: info.position.line
     }
-    , cursor = this.codeEditor.markText(cursorInfo.position, to, opt)
+    , cursor = this.codeEditor.markText(info.position, to, opt)
 
   if (!cursor.lines.length) {
-    cursor = this.addCursorOnLineEnd(cursorInfo, to, opt)
+    cursor = this.addCursorOnLineEnd(info, to, opt)
   }
 
-  $(document.getElementsByClassName(cursor.className))
-    .css("border-color", cursorInfo.color)
+  $(".cursor-id-" + info.id)
+    .css("border-color", info.color)
 
-  this.cursors.push({id: cursorInfo.id, cursor: cursor})
+  this.cursors.push({id: info.id, cursor: cursor})
 }
 
 Team1.Editor.prototype.getCursorClass = function (info, isLast) {
@@ -96,10 +95,10 @@ Team1.Editor.prototype.removeCursor = function (id) {
   }
 }
 
-Team1.Editor.prototype.addSelection = function (selectionInfo) {
+Team1.Editor.prototype.addSelection = function (info) {
   var opt = {}
     , sel
-    , pos = selectionInfo.position[0] || {}
+    , pos = info.position[0] || {}
     , from
     , to
 
@@ -110,17 +109,22 @@ Team1.Editor.prototype.addSelection = function (selectionInfo) {
     from = pos.head
     to = pos.anchor
   }
-  opt.className = this.getSelectionClass(selectionInfo.id, selectionInfo.color)
+  opt.className = this.getSelectionClass(info.id)
   sel = this.codeEditor.markText(from, to, opt)
 
-  $(document.getElementsByClassName(sel.className))
-    .css("background-color", selectionInfo.color)
+  this.selections.push({ id: info.id, sel: sel, color: info.color })
+  this.updateSelectionColors()
+}
 
-  this.selections.push({ id: selectionInfo.id, sel: sel })
+Team1.Editor.prototype.updateSelectionColors = function () {
+  _.each(this.selections, function (selection) {
+    $(".selection-id-" + selection.id)
+      .css("background-color", selection.color)
+  })
 }
 
 Team1.Editor.prototype.getSelectionClass = function (id) {
-  return "selection-id-" + id
+  return "selection selection-id-" + id
 }
 
 Team1.Editor.prototype.updateSelection = function (selectionInfo) {
@@ -133,6 +137,7 @@ Team1.Editor.prototype.removeSelection = function (id) {
     return item.id === id
   })
 
+  console.log('remove', item)
   if (item) {
     item.sel.clear()
     this.selections.splice(_.indexOf(this.selections, item), 1)

@@ -19,3 +19,7 @@
   content: "";
   border-right: 2px solid;
 }
+
+.selection {
+  opacity: 0.9
+}
