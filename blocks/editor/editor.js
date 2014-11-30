@@ -65,11 +65,13 @@ Team1.Editor.prototype.updateCursor = function (cursorInfo) {
 }
 
 Team1.Editor.prototype.removeCursor = function (id) {
-  for (var i = this.cursors.length - 1; i >= 0; i--) {
-    if (this.cursors[i].id === id) {
-      this.cursors[i].cursor.clear()
-      this.cursors.splice(i, 1)
-    }
+  var item = _.find(this.cursors, function (item) {
+    return item.id === id
+  })
+
+  if (item) {
+    item.cursor.clear()
+    this.cursors.splice(_.indexOf(this.cursors, item), 1)
   }
 }
 
