@@ -73,7 +73,7 @@ describe("Page Integration Tests", function () {
 
     Team1.start({socketUrl: "/testUrl"})
 
-    expect(this.testSocket.sendSync).toHaveBeenCalledWith(JSON.stringify(
+    expect(this.testSocket.sendSync).toHaveBeenCalledWith(
       { a: 'open'
       , user:
         { title: testTitle
@@ -81,7 +81,7 @@ describe("Page Integration Tests", function () {
         , document:
         { id: 100
         }
-      } )
+      }
     )
   }
   function onOpenFillUsersListTest () {

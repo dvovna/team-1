@@ -43,9 +43,6 @@ Team1 = {
     return $.Deferred().resolve(user).promise()
   }
 
-  /**
-   * Create interface for document
-   */
   , buildDocumentInterface: function (document) {
     this.Roster = new Team1.Roster()
     this.Editor = new Team1.Editor(
@@ -73,14 +70,14 @@ Team1 = {
   }
 
   , openDocument: function () {
-    this.socket.sendSync(JSON.stringify(
+    this.socket.sendSync(
       { a: 'open'
       , user: this.__user
       , document:
         { id: this.documentId
         }
       }
-    ) )
+    )
 
     return this
   }
@@ -143,7 +140,7 @@ Team1 = {
     }
     WebSocket.prototype.sendSync = function (message) {
       this._waitForConnection(_.bind(function () {
-        this.send(message)
+        this.send(JSON.stringify(message))
       }, this), 1000)
     }
     return new WebSocket(url)
@@ -157,11 +154,3 @@ Team1.SKIN_MODES = {
 Team1.defaults = {
   skinMode: Team1.SKIN_MODES.LIGHT
 }
-
-$(document).ready(function () {
-  Team1.start(
-    { socketUrl: 'ws://' + window.location.hostname + ":7900"
-    , themeApiUrl: "/theme"
-    }
-  )
-})

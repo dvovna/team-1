@@ -26,7 +26,7 @@ Team1.Editor.prototype.onCursorActivity = function () {
     , meta: this.codeEditor.getCursor()
     }
 
-  this.socket.sendSync(JSON.stringify(meta))
+  this.socket.sendSync(meta)
 }
 
 Team1.Editor.prototype.addCursor = function (cursorInfo) {
