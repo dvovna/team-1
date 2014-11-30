@@ -10,8 +10,9 @@ Team1.Header = function (options) {
   this.Switcher = new Switchery(this.switcherEl.get(0), {})
 
   $.get(options.themesApi, _.bind(function (themes) {
-    _.each(JSON.parse(themes), _.bind(function(theme) {
-      this.themesSelectboxEl.append(this.themeTemplate({name: theme.split('.')[0]}))
+    _.each(JSON.parse(themes), _.bind(function (theme) {
+      this.themesSelectboxEl
+        .append(this.themeTemplate({name: theme.split('.')[0]}))
     }, this))
   }, this))
 
@@ -28,7 +29,7 @@ Team1.Header = function (options) {
       ? Team1.SKIN_MODES.LIGHT
       : Team1.SKIN_MODES.DARK
 
-      this.$el.trigger("skin-mode-change", skinMode)
+    this.$el.trigger("skin-mode-change", skinMode)
   }, this))
 
   return _.extend(this.$el, this)

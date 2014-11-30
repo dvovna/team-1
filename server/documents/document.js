@@ -147,7 +147,9 @@ _.extend(Document.prototype, {
   }
 
   , saveDocument: function () {
-    this.backend.fetch('users-' + this.id, "seph", _.bind(this.writeToFile, this))
+    this.backend.fetch('users-' + this.id,
+      "seph",
+      _.bind(this.writeToFile, this))
   }
 
   , writeToFile: function (err, content) {

@@ -60,7 +60,7 @@ Team1 = {
       if (this.doc.type && this.doc.type.name === 'text')
         this.doc.attachCodeMirror(this.Editor.codeEditor)
 
-      if(document.content)
+      if (document.content)
         this.Editor.codeEditor.getDoc().setValue(document.content)
     }, this))
 
