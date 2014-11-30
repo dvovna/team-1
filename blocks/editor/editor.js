@@ -2,6 +2,7 @@ var Team1 = Team1 || {}
 
 Team1.Editor = function (options) {
   this.options = _.extend(options || {}, this.defaults)
+  this.socket = this.options.socket || {}
 
   this.codeEditor = CodeMirror.fromTextArea($("#docEditor")[0],
     { lineNumbers: true
@@ -18,30 +19,30 @@ Team1.Editor = function (options) {
 
 Team1.Editor.prototype.onCursorActivity = function () {
   var cursor = this.codeEditor.getCursor()
-  var meta = {
-    a: "meta"
-    , document: {
-      id: Team1.documentId
-    }
+    , meta =
+    { a: "meta"
+    , document: { id: Team1.documentId }
     , id: Team1.__user.id
     , color: Team1.__user.color
     , meta: cursor
-  }
-  Team1.send(JSON.stringify(meta))
+    }
+
+  this.socket.sendSync(JSON.stringify(meta))
 }
 
 Team1.Editor.prototype.addCursor = function (cursorInfo) {
-  var opt = {className: this.getCursorClass(cursorInfo.id, cursorInfo.color)}
+  var opt = { className: this.getCursorClass(cursorInfo.id, cursorInfo.color) }
     , to = {
       ch: cursorInfo.position.ch + 1,
       line: cursorInfo.position.line
     }
+    , cursor = this.codeEditor.markText(cursorInfo.position, to, opt)
 
-  var cursor = this.codeEditor.markText(cursorInfo.position, to, opt)
-  if (cursor.lines.length)
+  if (cursor.lines.length) {
     this.cursors.push({id: cursorInfo.id, cursor: cursor})
-  else
+  } else {
     this.addCursorOnLineEnd(cursorInfo)
+  }
 }
 
 Team1.Editor.prototype.getCursorClass = function (id, color) {
@@ -56,8 +57,8 @@ Team1.Editor.prototype.addCursorOnLineEnd = function (cursorInfo) {
       ch: cursorInfo.position.ch - 1,
       line: cursorInfo.position.line
     }
+    , cursor = this.codeEditor.markText(to, cursorInfo.position, opt)
 
-  var cursor = this.codeEditor.markText(to, cursorInfo.position, opt)
   this.cursors.push({id: cursorInfo.id, cursor: cursor})
 }
 
@@ -68,7 +69,8 @@ Team1.Editor.prototype.getCursorClassAfter = function (id, color) {
 Team1.Editor.prototype.updateCursor = function (cursorInfo) {
   this.removeCursor(cursorInfo.id)
   this.addCursor(cursorInfo)
-  $(".cursor-id-"+cursorInfo.id+"").css("border-color",cursorInfo.color)
+
+  $(".cursor-id-" + cursorInfo.id + "").css("border-color", cursorInfo.color)
 }
 
 Team1.Editor.prototype.removeCursor = function (id) {
@@ -81,12 +83,12 @@ Team1.Editor.prototype.removeCursor = function (id) {
 }
 
 Team1.Editor.prototype.addSelection = function (selectionInfo) {
-  var opt = {
-    className: this.getSelectionClass(selectionInfo.id, selectionInfo.color)
-  }
+  var opt =
+    { className: this.getSelectionClass(selectionInfo.id, selectionInfo.color)
+    }
+  , sel = this.codeEditor.markText(selectionInfo.from, selectionInfo.to, opt)
 
-  var sel = this.codeEditor.markText(selectionInfo.from, selectionInfo.to, opt)
-  this.selections.push({id: selectionInfo.id, sel: sel})
+  this.selections.push({ id: selectionInfo.id, sel: sel })
 }
 
 Team1.Editor.prototype.getSelectionClass = function (id, color) {

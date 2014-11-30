@@ -1,6 +1,7 @@
 var Team1 = Team1 || {}
 
-Team1.Header = function () {
+Team1.Header = function (options) {
+  options = options || {}
   this.$el = $("header")
   this.$styleEl = $(".theme_style")
   this.themesSelectboxEl = this.$el.find("#themes-list")
@@ -8,7 +9,7 @@ Team1.Header = function () {
   this.switcherEl = $("#switcher")
   this.Switcher = new Switchery(this.switcherEl.get(0), {})
 
-  $.get('/theme', _.bind(function (themes) {
+  $.get(options.themesApi, _.bind(function (themes) {
     _.each(JSON.parse(themes), _.bind(function(theme) {
       this.themesSelectboxEl.append(this.themeTemplate({name: theme.split('.')[0]}))
     }, this))
@@ -16,7 +17,7 @@ Team1.Header = function () {
 
   this.themesSelectboxEl.on("change", _.bind(function () {
     var themeName = this.themesSelectboxEl.val()
-    $.get("/theme", {name: themeName}, _.bind(function (data) {
+    $.get(options.themesApi, {name: themeName}, _.bind(function (data) {
       this.$styleEl.text(JSON.parse(data))
       this.$el.trigger("theme-change", themeName)
     }, this))

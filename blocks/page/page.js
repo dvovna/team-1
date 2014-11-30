@@ -48,7 +48,7 @@ Team1 = {
    */
   , buildDocumentInterface: function (document) {
     this.Roster = new Team1.Roster()
-    this.Editor = new Team1.Editor()
+    this.Editor = new Team1.Editor({socket: this.socket})
 
     this.doc.subscribe()
 
@@ -69,7 +69,7 @@ Team1 = {
   }
 
   , openDocument: function () {
-    this.send(JSON.stringify(
+    this.socket.sendSync(JSON.stringify(
       { a: 'open'
       , user: this.__user
       , document:
@@ -86,31 +86,6 @@ Team1 = {
     this.doc.setOnJoinMessageFn(this.onSocketJoin)
     this.doc.setOnCloseMessageFn(this.onSocketLeave)
     this.doc.setOnMetaMessageFn(this.onSocketMeta)
-  }
-
-  , send: function (message, callback) {
-    var self = this
-
-    this.waitForConnection(function () {
-      self.socket.send(message)
-
-      if (typeof callback !== 'undefined') {
-        callback()
-      }
-    }, 1000)
-  }
-
-  , waitForConnection: function (callback, interval) {
-    var that = this
-
-    if (this.socket.readyState === 1)
-    { callback()
-    } else {
-      setTimeout(function ()
-        { that.waitForConnection(callback)
-        }
-        , interval)
-    }
   }
 
   , onSocketJoin: function (data) {
@@ -152,6 +127,21 @@ Team1 = {
   }
 
   , getSocket : function (url) {
+    WebSocket.prototype._waitForConnection = function (callback, interval) {
+      if (this.readyState === 1)
+      { callback()
+      } else {
+        setTimeout(function ()
+          { this._waitForConnection(callback)
+          }
+          , interval)
+      }
+    }
+    WebSocket.prototype.sendSync = function (message) {
+      this._waitForConnection(_.bind(function () {
+        this.send(message)
+      }, this), 1000)
+    }
     return new WebSocket(url)
   }
 }
