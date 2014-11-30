@@ -1,5 +1,6 @@
 describe("Header Unit Tests", function () {
   var mocked = {}
+    , testThemeApi = "/yhrmw"
 
   beforeEach(before)
   afterEach(after)
@@ -28,7 +29,9 @@ describe("Header Unit Tests", function () {
   }
 
   function init() {
-    return new Team1.Header()
+    return new Team1.Header({
+      themesApi: testThemeApi
+    })
   }
 
   function initSwitchery() {
@@ -40,7 +43,7 @@ describe("Header Unit Tests", function () {
   function loadsSkins() {
     init()
 
-    expect(jasmine.Ajax.requests.mostRecent().url).toBe('/theme')
+    expect(jasmine.Ajax.requests.mostRecent().url).toBe(testThemeApi)
   }
 
   function updatesDropdownWithSkins() {

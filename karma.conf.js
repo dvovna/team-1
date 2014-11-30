@@ -12,8 +12,8 @@ module.exports = function(config) {
       , 'blocks/roster/roster.js'
       , 'tests/**/*unit.js'
       , 'tests/**/*intgr.js'
-      , 'blocks/**/*.html'
       , 'index.html'
+      , 'blocks/**/*.html'
     ]
 
     , preprocessors:

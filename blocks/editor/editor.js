@@ -18,13 +18,12 @@ Team1.Editor = function (options) {
 }
 
 Team1.Editor.prototype.onCursorActivity = function () {
-  var cursor = this.codeEditor.getCursor()
-    , meta =
+  var meta =
     { a: "meta"
-    , document: { id: Team1.documentId }
-    , id: Team1.__user.id
-    , color: Team1.__user.color
-    , meta: cursor
+    , document: { id: this.options.documentId }
+    , id: this.options.user.id
+    , color: this.options.user.color
+    , meta: this.codeEditor.getCursor()
     }
 
   this.socket.sendSync(JSON.stringify(meta))

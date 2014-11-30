@@ -2,6 +2,9 @@ describe("Page Integration Tests", function () {
   var socketHandlers = {}
 
   beforeEach(before)
+  afterEach(function () {
+    jasmine.Ajax.uninstall()
+  })
 
   describe("Initialization", function () {
     it("should show promt on init", showPromptTest)
@@ -42,7 +45,8 @@ describe("Page Integration Tests", function () {
 
     loadFixtures("index.html")
 
-    createTestSocket.call(this);
+    jasmine.Ajax.install()
+    createTestSocket.call(this)
 
     spyOn(window, "WebSocket").and.returnValue(this.testSocket)
     spyOn(window.sharejs, "Connection").and.returnValue({
@@ -62,14 +66,14 @@ describe("Page Integration Tests", function () {
   function sendSocketMessageTest () {
     var testTitle = "test dima"
 
-    spyOn(this.testSocket, "send")
+    spyOn(this.testSocket, "sendSync")
     spyOn(_, "random").and.returnValue(100)
 
     this.promptSpy.and.returnValue(testTitle)
 
     Team1.start({socketUrl: "/testUrl"})
 
-    expect(this.testSocket.send).toHaveBeenCalledWith(JSON.stringify(
+    expect(this.testSocket.sendSync).toHaveBeenCalledWith(JSON.stringify(
       { a: 'open'
       , user:
         { title: testTitle
@@ -141,10 +145,9 @@ describe("Page Integration Tests", function () {
 
   function createTestSocket() {
     this.testSocket =
-    {
-      readyState: 1
-    , send: function () {
-      }
+    { readyState: 1
+    , send: function () {}
+    , sendSync: function () {}
     }
   }
 })

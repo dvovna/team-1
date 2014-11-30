@@ -48,7 +48,11 @@ Team1 = {
    */
   , buildDocumentInterface: function (document) {
     this.Roster = new Team1.Roster()
-    this.Editor = new Team1.Editor({socket: this.socket})
+    this.Editor = new Team1.Editor(
+      { socket: this.socket
+      , documentId: this.documentId
+      , user: this.__user
+      })
 
     this.doc.subscribe()
 
