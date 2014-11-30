@@ -36,12 +36,12 @@ Team1.Editor.prototype.onCursorActivity = function () {
  * public handler
  */
 Team1.Editor.prototype.onSocketMeta = function (data) {
-  //this.updateCursor(
-  //  { id: data.id
-  //  , position : data.meta.cursorInfo
-  //  , color : data.color
-  //  }
-  //)
+  this.updateCursor(
+    { id: data.id
+    , position : data.meta.cursorInfo
+    , color : data.color
+    }
+  )
   this.updateSelection(
     { id: data.id
     , position: data.meta.listSelections
