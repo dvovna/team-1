@@ -137,7 +137,6 @@ Team1.Editor.prototype.removeSelection = function (id) {
     return item.id === id
   })
 
-  console.log('remove', item)
   if (item) {
     item.sel.clear()
     this.selections.splice(_.indexOf(this.selections, item), 1)
