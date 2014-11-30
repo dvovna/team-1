@@ -28,48 +28,40 @@ Team1.Editor.prototype.onCursorActivity = function () {
 
   this.socket.sendSync(meta)
 }
-
+//need to impl better way...
 Team1.Editor.prototype.addCursor = function (cursorInfo) {
-  var opt = { className: this.getCursorClass(cursorInfo.id, cursorInfo.color) }
-    , to = {
-      ch: cursorInfo.position.ch + 1,
-      line: cursorInfo.position.line
+  var opt = { className: this.getCursorClass(cursorInfo, false) }
+    , to =
+    { ch: cursorInfo.position.ch + 1
+    , line: cursorInfo.position.line
     }
     , cursor = this.codeEditor.markText(cursorInfo.position, to, opt)
 
-  if (cursor.lines.length) {
-    this.cursors.push({id: cursorInfo.id, cursor: cursor})
-  } else {
-    this.addCursorOnLineEnd(cursorInfo)
+  if (!cursor.lines.length) {
+    cursor = this.addCursorOnLineEnd(cursorInfo, to, opt)
   }
-}
 
-Team1.Editor.prototype.getCursorClass = function (id, color) {
-  return "cm-cursor cm-cursor-" + color + " cursor-id-" + id
-}
-
-Team1.Editor.prototype.addCursorOnLineEnd = function (cursorInfo) {
-  var opt = {
-      className: this.getCursorClassAfter(cursorInfo.id, cursorInfo.color)
-    }
-    , to = {
-      ch: cursorInfo.position.ch - 1,
-      line: cursorInfo.position.line
-    }
-    , cursor = this.codeEditor.markText(to, cursorInfo.position, opt)
+  $(document.getElementsByClassName(cursor.className))
+    .css("border-color", cursorInfo.color)
 
   this.cursors.push({id: cursorInfo.id, cursor: cursor})
 }
 
-Team1.Editor.prototype.getCursorClassAfter = function (id, color) {
-  return "cm-cursor-last cm-cursor-last-" + color + " cursor-id-" + id
+Team1.Editor.prototype.getCursorClass = function (info, isLast) {
+  var classStr = isLast ? "cm-cursor-last" : "cm-cursor"
+  return classStr + " cursor-id-" + info.id
+}
+
+Team1.Editor.prototype.addCursorOnLineEnd = function (cursorInfo, to, opt) {
+  opt.className = this.getCursorClass(cursorInfo, true)
+  to.ch = cursorInfo.position.ch - 1
+
+  return this.codeEditor.markText(to, cursorInfo.position, opt)
 }
 
 Team1.Editor.prototype.updateCursor = function (cursorInfo) {
   this.removeCursor(cursorInfo.id)
   this.addCursor(cursorInfo)
-
-  $(".cursor-id-" + cursorInfo.id + "").css("border-color", cursorInfo.color)
 }
 
 Team1.Editor.prototype.removeCursor = function (id) {

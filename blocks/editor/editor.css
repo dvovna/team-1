@@ -17,11 +17,5 @@
 }
 .cm-cursor-last {
   content: "";
-  border-left: 2px solid;
-}
-.cm-cursor-red:before, .cm-cursor-last-red:after {
-  border-color: red;
-}
-.cm-cursor-green:before, .cm-cursor-last-green:after {
-  border-color: green;
+  border-right: 2px solid;
 }
