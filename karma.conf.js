@@ -10,7 +10,7 @@ module.exports = function(config) {
       , 'blocks/header/header.js'
       , 'blocks/editor/editor.js'
       , 'blocks/roster/roster.js'
-      , 'tests/**/*unit.js'
+      , 'tests/**/*spec.js'
       , 'tests/**/*intgr.js'
       , 'index.html'
       , 'blocks/**/*.html'
