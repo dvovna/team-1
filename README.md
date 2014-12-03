@@ -4,35 +4,36 @@
 [![Issue Stats](http://issuestats.com/github/yandex-shri-minsk-2014/team-1/badge/pr)](http://issuestats.com/github/yandex-shri-minsk-2014/team-1)
 [![Issue Stats](http://issuestats.com/github/yandex-shri-minsk-2014/team-1/badge/issue)](http://issuestats.com/github/yandex-shri-minsk-2014/team-1)
 
-Collaborative real-time code editor
+## Инсталяция и запуск
 
-## Installing and running
+##### Единая команда запуска приложения:
+* `node start.js` -- загружает все зависимости, запускает gulp работу и затем сервер
 
-Navigate to the app folder and type following commands:
+## Структура проекта:
 
-* `npm install`  -- install all dependencies from package.json
-* `bower install` -- install all dependencies from bower.json
-* `npm run make` -- run gulp
-* `node server.js` -- run server
+- `blocks/` -- frontend. Client code (html, css, js) should be placed into appropriate blocks
+- `config/` -- basic app config (currently - port numbers)
+- `server/` -- backend. Entity descriptions (user, document) and request processing logic (e.g. operational transformation).
 
-## Dependencies:
+## Вклад в проект:
 
-Text editor implemented in JavaScript for the browser:
+##### Инфраструктура:
+- настройка jshint;
+- PreCommit Hooks (codestyle);
+- jasmine+karma (tests);
+- имплементация gulp-работ по сборке ресурсов;
+- node-deploy;
 
-[Codemirror](http://codemirror.net/)
+##### Сервер:
+- разработка цветового сопровождения пользователей;
+- переход от socketio --> websocket;
+- имплементация сохранения документов без доп ajax запросов на получение и посылку документа;
 
-Operational Transform library:
+##### Клиент:
+- разработка цветового сопровождения пользователей;
+- переход от socketio --> websocket;
+- имплементация отображения выделения текста другими пользователями;
+- введен header.js в котором сосредоточилась логика по управлению элементами расположенными в хедере;
+- введен header.html тем самым страница продолжила существовать в качестве набора блоков;
+- были покрыты тестами roster, header, page(функционал по работе с пользователями);
 
-[ShareJS](http://sharejs.org/)
-
-Websocket library:
-
-[Websocket](https://github.com/einaros/ws)
-
-## Project structure:
-
-`blocks/` -- frontend. Client code (html, css, js) should be placed into appropriate blocks
-
-`config/` -- basic app config (currently - port numbers)
-
-`server/` -- backend. Entity descriptions (user, document) and request processing logic (e.g. operational transformation).
